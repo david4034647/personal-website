@@ -1,0 +1,28 @@
+{
+  "name": "david-dai-website",
+  "version": "1.0.0",
+  "description": "Personal website with Facebook posts integration",
+  "main": "index.html",
+  "private": true,
+  "scripts": {
+    "scrape": "node scripts/scrape-facebook.js",
+    "download": "node scripts/download-media.js",
+    "upload": "node scripts/upload-to-qiniu.js",
+    "build-posts": "npm run scrape && npm run download && npm run upload",
+    "dev": "npx live-server --port=3000",
+    "test": "node scripts/test-media-frontend.js",
+    "test:frontend": "node scripts/test-media-frontend.js",
+    "test:media": "node scripts/test-media-urls.js"
+  },
+  "dependencies": {
+    "axios": "^1.6.0",
+    "fs-extra": "^11.0.0",
+    "puppeteer": "^21.0.0",
+    "qiniu": "^7.10.0"
+  },
+  "devDependencies": {
+    "@cloudbase/framework-plugin-website": "^1.9.7",
+    "chrome-cookies-secure": "^3.0.2",
+    "sqlite3": "^6.0.1"
+  }
+}

@@ -1,0 +1,19 @@
+# Dependencies
+node_modules/
+
+# Secrets / environment
+.env
+
+# AI tooling
+.claude/
+
+# Generated media downloads
+media/
+
+# Logs and test artifacts
+scripts/*.log
+data/*.log
+data/*.png
+
+# OS files
+.DS_Store
