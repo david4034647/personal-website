@@ -134,6 +134,36 @@
             margin-right: 2px;
         }
 
+        /* Language switcher */
+        .lang-switcher {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .lang-btn {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            padding: 4px 10px;
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-radius: 4px;
+        }
+
+        .lang-btn:hover {
+            border-color: var(--primary);
+            color: var(--text-primary);
+        }
+
+        .lang-btn.active {
+            background: var(--primary);
+            color: var(--bg-dark);
+            border-color: var(--primary);
+        }
+
         /* Hero Section */
         .hero {
             min-height: 100vh;
@@ -314,7 +344,7 @@
         }
 
         .image-frame::before {
-            content: '[PHOTO]';
+            content: var(--i18n-photo, '[PHOTO]');
             position: absolute;
             top: -12px;
             left: 16px;
@@ -684,6 +714,10 @@
         @media (max-width: 640px) {
             .nav-links {
                 display: none;
+            }
+
+            .lang-switcher {
+                margin-left: auto;
             }
 
             .hero h1 {
@@ -1235,7 +1269,7 @@
         }
 
         .lightbox-info::before {
-            content: '[IMAGE] ';
+            content: var(--i18n-image, '[IMAGE] ');
             color: var(--primary);
         }
 
@@ -1356,7 +1390,7 @@
         }
 
         .carousel-item.media-error::before {
-            content: '📷 图片暂不可用';
+            content: var(--i18n-media-error, '📷 图片暂不可用');
         }
 
         /* Lazy loading for images beyond first 6 posts */
@@ -1376,11 +1410,16 @@
         <nav class="container">
             <div class="logo">David Dai</div>
             <ul class="nav-links">
-                <li><a href="#about">关于</a></li>
-                <li><a href="#experience">经历</a></li>
-                <li><a href="#posts">动态</a></li>
-                <li><a href="#contact">联系</a></li>
+                <li><a href="#about" data-i18n="nav_about">关于</a></li>
+                <li><a href="#experience" data-i18n="nav_experience">经历</a></li>
+                <li><a href="#posts" data-i18n="nav_posts">动态</a></li>
+                <li><a href="#contact" data-i18n="nav_contact">联系</a></li>
             </ul>
+            <div class="lang-switcher">
+                <button class="lang-btn active" data-lang="zh" aria-label="Switch to Chinese">中文</button>
+                <button class="lang-btn" data-lang="en" aria-label="Switch to English">EN</button>
+                <button class="lang-btn" data-lang="sv" aria-label="Switch to Swedish">SV</button>
+            </div>
         </nav>
     </header>
 
@@ -1388,29 +1427,29 @@
         <div class="container">
             <div class="hero-content">
                 <div class="hero-text">
-                    <div class="hero-badge">在线</div>
-                    <h1>你好，我是 <span>David Dai</span></h1>
-                    <p class="hero-subtitle">首席技术官 (CTO) | 技术领导者</p>
-                    <div class="hero-bio">
+                    <div class="hero-badge" data-i18n="hero_badge">在线</div>
+                    <h1><span data-i18n="hero_title_prefix">你好，我是</span> <span>David Dai</span></h1>
+                    <p class="hero-subtitle" data-i18n="hero_subtitle">首席技术官 (CTO) | 技术领导者</p>
+                    <div class="hero-bio" data-i18n="hero_bio">
                         Chinese 美分滚粗
                     </div>
                     <div class="hero-stats">
                         <div class="stat">
                             <div class="stat-number">105+</div>
-                            <div class="stat-label">好友连接</div>
+                            <div class="stat-label" data-i18n="hero_stat_connections">好友连接</div>
                         </div>
                         <div class="stat">
                             <div class="stat-number">4+</div>
-                            <div class="stat-label">年CTO经验</div>
+                            <div class="stat-label" data-i18n="hero_stat_cto_exp">年CTO经验</div>
                         </div>
                         <div class="stat">
                             <div class="stat-number">上海</div>
-                            <div class="stat-label">现居地</div>
+                            <div class="stat-label" data-i18n="hero_stat_location">现居地</div>
                         </div>
                     </div>
                     <div class="hero-buttons">
-                        <a href="#contact" class="btn btn-primary">联系我</a>
-                        <a href="#experience" class="btn btn-secondary">查看经历</a>
+                        <a href="#contact" class="btn btn-primary" data-i18n="hero_btn_contact">联系我</a>
+                        <a href="#experience" class="btn btn-secondary" data-i18n="hero_btn_experience">查看经历</a>
                     </div>
                 </div>
                 <div class="hero-image">
@@ -1418,12 +1457,12 @@
                         <img src="data/profile.jpg" alt="David Dai" onerror="this.src='https://ui-avatars.com/api/?name=David+Dai&background=d97706&color=fff&size=400&font-size=0.4&bold=true'">
                         <div class="floating-card">
                             <div class="floating-card-icon">💼</div>
-                            <div class="floating-card-text">职位</div>
+                            <div class="floating-card-text" data-i18n="floating_position">职位</div>
                             <div class="floating-card-value">CTO</div>
                         </div>
                         <div class="floating-card">
                             <div class="floating-card-icon">🎓</div>
-                            <div class="floating-card-text">学历</div>
+                            <div class="floating-card-text" data-i18n="floating_education">学历</div>
                             <div class="floating-card-value">安徽大学</div>
                         </div>
                     </div>
@@ -1435,38 +1474,38 @@
     <section class="about" id="about">
         <div class="container">
             <div class="section-title">
-                <h2>关于我</h2>
-                <p>技术驱动创新， leadership 创造未来</p>
+                <h2 data-i18n="about_title">关于我</h2>
+                <p data-i18n="about_subtitle">技术驱动创新， leadership 创造未来</p>
             </div>
             <div class="about-grid">
                 <div class="about-card">
                     <div class="about-card-icon">📍</div>
-                    <h3>地理位置</h3>
-                    <p>住在上海，来自上海。深耕本地科技圈，连接东西方技术文化。</p>
+                    <h3 data-i18n="about_location_title">地理位置</h3>
+                    <p data-i18n="about_location_desc">住在上海，来自上海。深耕本地科技圈，连接东西方技术文化。</p>
                 </div>
                 <div class="about-card">
                     <div class="about-card-icon">🎂</div>
-                    <h3>个人资料</h3>
-                    <p>出生于1984年1月1日，拥有超过15年的技术行业经验。</p>
+                    <h3 data-i18n="about_profile_title">个人资料</h3>
+                    <p data-i18n="about_profile_desc">出生于1984年1月1日，拥有超过15年的技术行业经验。</p>
                 </div>
                 <div class="about-card">
                     <div class="about-card-icon">🚀</div>
-                    <h3>职业目标</h3>
-                    <p>通过技术创新推动业务增长，打造高效技术团队，构建可扩展的技术架构。</p>
+                    <h3 data-i18n="about_goals_title">职业目标</h3>
+                    <p data-i18n="about_goals_desc">通过技术创新推动业务增长，打造高效技术团队，构建可扩展的技术架构。</p>
                 </div>
                 <div class="about-card">
                     <div class="about-card-icon">💡</div>
-                    <h3>技术理念</h3>
-                    <p>相信技术的力量可以改变世界，致力于用代码创造价值。</p>
+                    <h3 data-i18n="about_philosophy_title">技术理念</h3>
+                    <p data-i18n="about_philosophy_desc">相信技术的力量可以改变世界，致力于用代码创造价值。</p>
                 </div>
                 <div class="about-card contact-card">
                     <div class="about-card-icon">📧</div>
-                    <h3>联系方式</h3>
+                    <h3 data-i18n="contact_title">联系方式</h3>
                     <div class="contact-info">
-                        <p><strong>Email:</strong> <a href="mailto:david4034647@gmail.com">david4034647@gmail.com</a></p>
-                        <p><strong>微信:</strong> 扫码添加</p>
+                        <p><strong data-i18n="contact_email_label">Email:</strong> <a href="mailto:david4034647@gmail.com">david4034647@gmail.com</a></p>
+                        <p><strong data-i18n="contact_wechat_label">微信:</strong> <span data-i18n="contact_scan">扫码添加</span></p>
                         <div class="wechat-qr">
-                            <img src="wechat-qr.jpg" alt="微信二维码" loading="lazy">
+                            <img src="wechat-qr.jpg" alt="微信二维码" loading="lazy" data-i18n="wechat_qr_alt">
                         </div>
                     </div>
                 </div>
@@ -1477,22 +1516,22 @@
     <section class="experience" id="experience">
         <div class="container">
             <div class="section-title">
-                <h2>工作经历</h2>
-                <p>我的职业发展历程</p>
+                <h2 data-i18n="experience_title">工作经历</h2>
+                <p data-i18n="experience_subtitle">我的职业发展历程</p>
             </div>
             <div class="timeline">
                 <div class="timeline-item">
                     <div class="timeline-content">
-                        <div class="timeline-date">2021年11月 - 至今 · 4年4个月</div>
+                        <div class="timeline-date" data-i18n="timeline_date_current">2021年11月 - 至今 · 4年4个月</div>
                         <div class="timeline-title">Chief Technology Officer (CTO)</div>
                         <div class="timeline-company">上海归农信息技术有限公司</div>
                     </div>
                 </div>
                 <div class="timeline-item">
                     <div class="timeline-content">
-                        <div class="timeline-date">教育背景</div>
+                        <div class="timeline-date" data-i18n="timeline_education">教育背景</div>
                         <div class="timeline-title">安徽大学</div>
-                        <div class="timeline-company">本科/研究生学位</div>
+                        <div class="timeline-company" data-i18n="timeline_degree">本科/研究生学位</div>
                     </div>
                 </div>
             </div>
@@ -1502,12 +1541,12 @@
     <section class="posts" id="posts">
         <div class="container">
             <div class="section-title">
-                <h2>动态</h2>
-                <p>我的 Facebook 动态分享</p>
+                <h2 data-i18n="posts_title">动态</h2>
+                <p data-i18n="posts_subtitle">我的 Facebook 动态分享</p>
             </div>
 
             <div class="posts-filter" id="posts-filter">
-                <button class="filter-btn active" data-year="all">全部</button>
+                <button class="filter-btn active" data-year="all" data-i18n="filter_all">全部</button>
                 <!-- Year filters will be generated dynamically -->
             </div>
 
@@ -1523,7 +1562,7 @@
     <!-- Lightbox for image viewing -->
     <div class="lightbox" id="lightbox">
         <button class="lightbox-close"></button>
-        <button class="lightbox-nav lightbox-prev" aria-label="上一张">
+        <button class="lightbox-nav lightbox-prev" aria-label="Previous">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
                 <polyline points="15 18 9 12 15 6"></polyline>
             </svg>
@@ -1532,7 +1571,7 @@
             <img src="" alt="Full size" id="lightbox-img">
             <div class="lightbox-info" id="lightbox-info"></div>
         </div>
-        <button class="lightbox-nav lightbox-next" aria-label="下一张">
+        <button class="lightbox-nav lightbox-next" aria-label="Next">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
                 <polyline points="9 18 15 12 9 6"></polyline>
             </svg>
@@ -1545,11 +1584,247 @@
                 <a href="https://www.facebook.com/david.dai.1213" class="social-link" target="_blank">f</a>
                 <a href="https://x.com/hackjava2017" class="social-link" target="_blank">𝕏</a>
             </div>
-            <p>&copy; 2024 David Dai. All rights reserved. | 基于 Facebook 资料生成</p>
+            <p data-i18n="footer_copyright">&copy; 2024 David Dai. All rights reserved. | 基于 Facebook 资料生成</p>
         </div>
     </footer>
 
     <script>
+        // Internationalization
+        const i18n = {
+            zh: {
+                title: 'David Dai - CTO | 技术领导者',
+                nav_about: '关于',
+                nav_experience: '经历',
+                nav_posts: '动态',
+                nav_contact: '联系',
+                hero_badge: '在线',
+                hero_title_prefix: '你好，我是',
+                hero_subtitle: '首席技术官 (CTO) | 技术领导者',
+                hero_stat_connections: '好友连接',
+                hero_stat_cto_exp: '年CTO经验',
+                hero_stat_location: '现居地',
+                hero_btn_contact: '联系我',
+                hero_btn_experience: '查看经历',
+                floating_position: '职位',
+                floating_education: '学历',
+                about_title: '关于我',
+                about_subtitle: '技术驱动创新， leadership 创造未来',
+                about_location_title: '地理位置',
+                about_location_desc: '住在上海，来自上海。深耕本地科技圈，连接东西方技术文化。',
+                about_profile_title: '个人资料',
+                about_profile_desc: '出生于1984年1月1日，拥有超过15年的技术行业经验。',
+                about_goals_title: '职业目标',
+                about_goals_desc: '通过技术创新推动业务增长，打造高效技术团队，构建可扩展的技术架构。',
+                about_philosophy_title: '技术理念',
+                about_philosophy_desc: '相信技术的力量可以改变世界，致力于用代码创造价值。',
+                contact_title: '联系方式',
+                contact_email_label: 'Email:',
+                contact_wechat_label: '微信:',
+                contact_scan: '扫码添加',
+                wechat_qr_alt: '微信二维码',
+                hero_bio: 'Chinese 美分滚粗',
+                experience_title: '工作经历',
+                experience_subtitle: '我的职业发展历程',
+                timeline_date_current: '2021年11月 - 至今 · 4年4个月',
+                timeline_education: '教育背景',
+                timeline_degree: '本科/研究生学位',
+                posts_title: '动态',
+                posts_subtitle: '我的 Facebook 动态分享',
+                filter_all: '全部',
+                footer_copyright: '© 2024 David Dai. All rights reserved. | 基于 Facebook 资料生成',
+                css_photo: '[PHOTO]',
+                css_image: '[IMAGE]',
+                css_media_error: '📷 图片暂不可用',
+                media_counter: '{0} 张',
+                media_badge_single: '文件',
+                media_badge_plural: '媒体',
+                media_unavailable: '图片暂不可用',
+                no_posts_year: '// 该年份暂无动态',
+                no_posts_data: '暂无动态数据',
+                build_posts_hint: '请先运行: npm run build-posts',
+                lightbox_alt: 'Full size',
+                carousel_prev: '上一张',
+                carousel_next: '下一张',
+                image_alt: 'Post image {0}',
+                media_error: '图片暂不可用'
+            },
+            en: {
+                title: 'David Dai - CTO | Tech Leader',
+                nav_about: 'About',
+                nav_experience: 'Experience',
+                nav_posts: 'Posts',
+                nav_contact: 'Contact',
+                hero_badge: 'Online',
+                hero_title_prefix: "Hi, I'm",
+                hero_subtitle: 'Chief Technology Officer (CTO) | Tech Leader',
+                hero_stat_connections: 'Connections',
+                hero_stat_cto_exp: 'Years CTO Exp',
+                hero_stat_location: 'Location',
+                hero_btn_contact: 'Contact Me',
+                hero_btn_experience: 'View Experience',
+                floating_position: 'Position',
+                floating_education: 'Education',
+                about_title: 'About Me',
+                about_subtitle: 'Technology-driven innovation, leadership creates the future',
+                about_location_title: 'Location',
+                about_location_desc: 'Lives in Shanghai, from Shanghai. Deeply rooted in the local tech community, bridging Eastern and Western tech cultures.',
+                about_profile_title: 'Profile',
+                about_profile_desc: 'Born January 1, 1984, with over 15 years of experience in the tech industry.',
+                about_goals_title: 'Career Goals',
+                about_goals_desc: 'Drive business growth through tech innovation, build efficient tech teams, construct scalable architecture.',
+                about_philosophy_title: 'Tech Philosophy',
+                about_philosophy_desc: 'Believe in the power of technology to change the world, dedicated to creating value with code.',
+                contact_title: 'Contact',
+                contact_email_label: 'Email:',
+                contact_wechat_label: 'WeChat:',
+                contact_scan: 'Scan to add',
+                wechat_qr_alt: 'WeChat QR Code',
+                hero_bio: 'Chinese 美分滚粗',
+                experience_title: 'Work Experience',
+                experience_subtitle: 'My Career Journey',
+                timeline_date_current: 'Nov 2021 - Present · 4y 4m',
+                timeline_education: 'Education',
+                timeline_degree: "Bachelor's/Master's Degree",
+                posts_title: 'Posts',
+                posts_subtitle: 'My Facebook Posts',
+                filter_all: 'All',
+                footer_copyright: '© 2024 David Dai. All rights reserved. | Generated from Facebook profile',
+                css_photo: '[PHOTO]',
+                css_image: '[IMAGE]',
+                css_media_error: '📷 Image unavailable',
+                media_counter: '{0} image(s)',
+                media_badge_single: 'file',
+                media_badge_plural: 'media',
+                media_unavailable: 'Images unavailable',
+                no_posts_year: '// No posts for this year',
+                no_posts_data: 'No posts available',
+                build_posts_hint: 'Please run: npm run build-posts',
+                lightbox_alt: 'Full size',
+                carousel_prev: 'Previous',
+                carousel_next: 'Next',
+                image_alt: 'Post image {0}',
+                media_error: 'Image unavailable'
+            },
+            sv: {
+                title: 'David Dai - CTO | Teknisk Ledare',
+                nav_about: 'Om',
+                nav_experience: 'Erfarenhet',
+                nav_posts: 'Inlägg',
+                nav_contact: 'Kontakt',
+                hero_badge: 'Online',
+                hero_title_prefix: 'Hej, jag är',
+                hero_subtitle: 'Chief Technology Officer (CTO) | Teknisk Ledare',
+                hero_stat_connections: 'Kontakter',
+                hero_stat_cto_exp: 'År CTO-erfarenhet',
+                hero_stat_location: 'Plats',
+                hero_btn_contact: 'Kontakta Mig',
+                hero_btn_experience: 'Visa Erfarenhet',
+                floating_position: 'Position',
+                floating_education: 'Utbildning',
+                about_title: 'Om Mig',
+                about_subtitle: 'Teknikdriven innovation, leadership skapar framtiden',
+                about_location_title: 'Plats',
+                about_location_desc: 'Bor i Shanghai, från Shanghai. Djupt rotad i den lokala tech-gemenskapen, bygger broar mellan östlig och västlig tech-kultur.',
+                about_profile_title: 'Profil',
+                about_profile_desc: 'Född 1 januari 1984, med över 15 års erfarenhet inom tech-branschen.',
+                about_goals_title: 'Karriärmål',
+                about_goals_desc: 'Driva affärsutveckling genom tech-innovation, bygga effektiva tech-team, konstruera skalbar arkitektur.',
+                about_philosophy_title: 'Tech-filosofi',
+                about_philosophy_desc: 'Tror på teknikens kraft att förändra världen, dedikerad till att skapa värde med kod.',
+                contact_title: 'Kontakt',
+                contact_email_label: 'Email:',
+                contact_wechat_label: 'WeChat:',
+                contact_scan: 'Skanna för att lägga till',
+                wechat_qr_alt: 'WeChat QR-kod',
+                hero_bio: 'Chinese 美分滚粗',
+                experience_title: 'Arbetslivserfarenhet',
+                experience_subtitle: 'Min Karriärsresa',
+                timeline_date_current: 'Nov 2021 - Nuvarande · 4 år 4 mån',
+                timeline_education: 'Utbildning',
+                timeline_degree: 'Kandidatexamen/Masterexamen',
+                posts_title: 'Inlägg',
+                posts_subtitle: 'Mina Facebook-inlägg',
+                filter_all: 'Alla',
+                footer_copyright: '© 2024 David Dai. All rights reserved. | Genererat från Facebook-profil',
+                css_photo: '[FOTO]',
+                css_image: '[BILD]',
+                css_media_error: '📷 Bild ej tillgänglig',
+                media_counter: '{0} bild(er)',
+                media_badge_single: 'fil',
+                media_badge_plural: 'media',
+                media_unavailable: 'Bilder ej tillgängliga',
+                no_posts_year: '// Inga inlägg för detta år',
+                no_posts_data: 'Inga inlägg tillgängliga',
+                build_posts_hint: 'Kör: npm run build-posts',
+                lightbox_alt: 'Full storlek',
+                carousel_prev: 'Föregående',
+                carousel_next: 'Nästa',
+                image_alt: 'Inläggsbild {0}',
+                media_error: 'Bild ej tillgänglig'
+            }
+        };
+
+        let currentLang = localStorage.getItem('preferredLang') || 'zh';
+
+        function getLocale() {
+            const map = { zh: 'zh-CN', en: 'en-US', sv: 'sv-SE' };
+            return map[currentLang] || 'zh-CN';
+        }
+
+        function t(key, ...args) {
+            const str = i18n[currentLang]?.[key] || i18n['zh']?.[key] || key;
+            return args.reduce((s, arg, i) => s.replace(`{${i}}`, arg), str);
+        }
+
+        function updateI18n() {
+            document.documentElement.lang = getLocale();
+            document.title = t('title');
+
+            const root = document.documentElement;
+            root.style.setProperty('--i18n-photo', `"${t('css_photo')}"`);
+            root.style.setProperty('--i18n-image', `"${t('css_image')} "`);
+            root.style.setProperty('--i18n-media-error', `"${t('css_media_error')}"`);
+
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.lang === currentLang);
+            });
+
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.dataset.i18n;
+                if (key && i18n[currentLang]?.[key] !== undefined) {
+                    if (el.tagName === 'IMG') {
+                        el.alt = i18n[currentLang][key];
+                    } else {
+                        el.textContent = i18n[currentLang][key];
+                    }
+                }
+            });
+        }
+
+        function setLanguage(lang) {
+            if (!i18n[lang]) return;
+            currentLang = lang;
+            localStorage.setItem('preferredLang', lang);
+
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.lang === lang);
+            });
+
+            updateI18n();
+
+            if (postsData.length > 0) {
+                generateYearFilters();
+                renderPosts();
+            }
+        }
+
+        function initI18n() {
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.addEventListener('click', () => setLanguage(btn.dataset.lang));
+            });
+            updateI18n();
+        }
+
         // Smooth scroll for navigation links
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
@@ -1617,9 +1892,9 @@
                 console.error('Error loading posts:', error);
                 document.getElementById('posts-grid').innerHTML = `
                     <div style="text-align: center; color: var(--text-secondary); padding: 40px;">
-                        <p>暂无动态数据</p>
+                        <p>${t('no_posts_data')}</p>
                         <p style="font-size: 0.875rem; margin-top: 10px;">
-                            请先运行: npm run build-posts
+                            ${t('build_posts_hint')}
                         </p>
                     </div>
                 `;
@@ -1630,7 +1905,7 @@
         function formatDate(dateString) {
             if (!dateString) return '';
             const date = new Date(dateString);
-            return date.toLocaleDateString('zh-CN', {
+            return date.toLocaleDateString(getLocale(), {
                 year: 'numeric',
                 month: 'short',
                 day: 'numeric'
@@ -1677,7 +1952,7 @@
 
             // Keep the "全部" button and add year buttons
             filterContainer.innerHTML = `
-                <button class="filter-btn active" data-year="all">全部</button>
+                <button class="filter-btn active" data-year="all">${t('filter_all')}</button>
                 ${yearButtons}
             `;
 
@@ -1731,7 +2006,7 @@
             if (filteredPosts.length === 0) {
                 grid.innerHTML = `
                     <div style="text-align: center; color: var(--text-secondary); padding: 40px; grid-column: 1/-1; font-family: monospace;">
-                        <p>// 该年份暂无动态</p>
+                        <p>${t('no_posts_year')}</p>
                     </div>
                 `;
                 return;
@@ -1754,10 +2029,10 @@
                 const delay = (index % 10) * 50;
 
                 return `
-                    <article class="post-card ${post.content ? 'post-has-content' : ''}" data-year="${getYear(post) || 'unknown'}">
+                    <article class="post-card ${post.content ? 'post-has-content' : ''}" data-year="${getYear(post) || 'unknown'}" style="transition-delay: ${delay}ms">
                         ${hasMedia ? `
                             <div class="post-media">
-                                ${mediaCount > 1 ? `<span class="media-counter">${mediaCount} 张</span>` : ''}
+                                ${mediaCount > 1 ? `<span class="media-counter">${t('media_counter', mediaCount)}</span>` : ''}
                                 ${mediaHtml}
                             </div>
                         ` : ''}
@@ -1767,7 +2042,7 @@
                         <div class="post-meta">
                             <div class="post-meta-top">
                                 ${timeDisplay ? `<time class="post-timestamp">${timeDisplay}</time>` : ''}
-                                ${hasMedia ? `<span class="media-badge">${mediaCount} ${mediaCount > 1 ? 'media' : 'file'}</span>` : ''}
+                                ${hasMedia ? `<span class="media-badge">${mediaCount} ${mediaCount > 1 ? t('media_badge_plural') : t('media_badge_single')}</span>` : ''}
                             </div>
                             ${location ? `<div class="post-location">${escapeHtml(location)}</div>` : ''}
                         </div>
@@ -1800,7 +2075,7 @@
                     const counter = postMedia.querySelector('.media-counter');
                     if (counter && totalItems > 1) {
                         const remaining = totalItems - errorItems;
-                        counter.textContent = remaining > 0 ? `${remaining} 张` : '图片暂不可用';
+                        counter.textContent = remaining > 0 ? t('media_counter', remaining) : t('media_unavailable');
                     }
                 }
             }
@@ -1823,7 +2098,7 @@
                             </video>
                         ` : `
                             <img src="${mediaUrl}"
-                                 alt="Post image ${i + 1}"
+                                 alt="${t('image_alt', i + 1)}"
                                  ${shouldLazyLoad ? 'loading="lazy" class="lightbox-trigger lazy-img"' : 'class="lightbox-trigger"'}
                                  data-index="${i}"
                                  data-post-index="${postIndex}"
@@ -1842,12 +2117,12 @@
                 <div class="post-media-carousel" data-post-index="${postIndex}">
                     <div class="carousel-container">${items}</div>
                     ${media.length > 1 ? `
-                        <button class="carousel-nav carousel-prev" aria-label="上一张">
+                        <button class="carousel-nav carousel-prev" aria-label="${t('carousel_prev')}">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
                                 <polyline points="15 18 9 12 15 6"></polyline>
                             </svg>
                         </button>
-                        <button class="carousel-nav carousel-next" aria-label="下一张">
+                        <button class="carousel-nav carousel-next" aria-label="${t('carousel_next')}">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
                                 <polyline points="9 18 15 12 9 6"></polyline>
                             </svg>
@@ -1907,6 +2182,11 @@
             const closeBtn = lightbox.querySelector('.lightbox-close');
             const prevBtn = lightbox.querySelector('.lightbox-prev');
             const nextBtn = lightbox.querySelector('.lightbox-next');
+
+            // Update translated alt/aria attributes
+            lightboxImg.alt = t('lightbox_alt');
+            prevBtn.setAttribute('aria-label', t('carousel_prev'));
+            nextBtn.setAttribute('aria-label', t('carousel_next'));
 
             // Collect all lightbox images, skipping those that failed to load
             lightboxImages = [];
@@ -2054,6 +2334,9 @@
 
         // Initialize custom lazy loading
         initCustomLazyLoad();
+
+        // Initialize i18n after all setup
+        initI18n();
     </script>
 </body>
 </html>
