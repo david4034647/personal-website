@@ -14,6 +14,8 @@ media/
 scripts/*.log
 data/*.log
 data/*.png
+data/*.backup
+data/*backup*
 
 # OS files
 .DS_Store
