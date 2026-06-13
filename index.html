@@ -890,11 +890,13 @@
 
         .carousel-container {
             display: flex;
+            align-items: flex-start;
             transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .carousel-item {
             min-width: 100%;
+            max-width: 100%;
             flex-shrink: 0;
             position: relative;
         }
@@ -913,11 +915,28 @@
         .carousel-item img,
         .carousel-item video {
             width: 100%;
-            height: auto;
-            object-fit: cover;
             display: block;
             cursor: zoom-in;
             transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), filter 0.3s;
+        }
+
+        /* Single image posts keep their natural aspect ratio */
+        .carousel-item:only-child img,
+        .carousel-item:only-child video {
+            height: auto;
+            object-fit: cover;
+        }
+
+        /* Multi-image carousels use a consistent aspect ratio so the card height
+           doesn't jump and shorter images don't leave excessive empty space. */
+        .carousel-item:not(:only-child) {
+            aspect-ratio: 4 / 3;
+        }
+
+        .carousel-item:not(:only-child) img,
+        .carousel-item:not(:only-child) video {
+            height: 100%;
+            object-fit: cover;
         }
 
         .post-card:hover .carousel-item img {
@@ -1280,7 +1299,6 @@
         .lightbox-next {
             right: 20px;
         }
-        }
 
         /* Loading placeholder */
         .post-card.loading {
@@ -1300,7 +1318,6 @@
             background: linear-gradient(90deg, var(--bg-card) 25%, rgba(217, 119, 6, 0.08) 50%, var(--bg-card) 75%);
             background-size: 200% 100%;
             animation: shimmer 1.5s infinite;
-            min-height: 200px;
         }
 
         .carousel-item img {
@@ -1312,10 +1329,16 @@
             opacity: 1;
         }
 
-        /* Stop shimmer when image is loaded */
-        .carousel-item:has(img.loaded) {
+        /* Stop shimmer and collapse placeholder once media is loaded */
+        .carousel-item:has(img.loaded),
+        .carousel-item:has(video) {
             animation: none;
             background: none;
+        }
+
+        /* Reserve space only while media is still loading */
+        .carousel-item:not(:has(img.loaded)):not(:has(video)) {
+            min-height: 200px;
         }
 
         /* Show a placeholder for carousel items whose media failed to load */
