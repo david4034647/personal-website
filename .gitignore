@@ -16,6 +16,10 @@ data/*.log
 data/*.png
 data/*.backup
 data/*backup*
+scripts/verify-*.js
+
+# Build output
+dist/
 
 # OS files
 .DS_Store

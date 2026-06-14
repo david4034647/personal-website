@@ -76,6 +76,11 @@
             backdrop-filter: blur(10px);
             border-bottom: 1px solid var(--border);
             font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            transition: background 0.3s ease;
+        }
+
+        header.scrolled {
+            background: rgba(13, 13, 13, 0.98);
         }
 
         nav {
@@ -764,7 +769,6 @@
             padding: 8px 20px;
             border: 1px solid var(--border);
             background: rgba(26, 26, 26, 0.8);
-            backdrop-filter: blur(10px);
             color: var(--text-secondary);
             cursor: pointer;
             font-size: 0.85rem;
@@ -826,7 +830,6 @@
 
         .post-card {
             background: rgba(26, 26, 26, 0.6);
-            backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.08);
             border-radius: 12px;
             overflow: hidden;
@@ -836,6 +839,8 @@
             margin-bottom: 24px;
             break-inside: avoid;
             position: relative;
+            content-visibility: auto;
+            contain-intrinsic-size: 0 400px;
         }
 
         .post-card::before {
@@ -867,15 +872,8 @@
         }
 
         .post-card.loading {
-            background: linear-gradient(90deg, var(--bg-terminal) 25%, var(--bg-card) 50%, var(--bg-terminal) 75%);
-            background-size: 200% 100%;
-            animation: shimmer 1.5s infinite;
+            background: var(--bg-card);
             height: 300px;
-        }
-
-        @keyframes shimmer {
-            0% { background-position: 200% 0; }
-            100% { background-position: -200% 0; }
         }
 
         .post-content {
@@ -1002,7 +1000,6 @@
             top: 12px;
             right: 12px;
             background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(10px);
             color: var(--primary);
             padding: 6px 12px;
             border-radius: 20px;
@@ -1153,7 +1150,6 @@
             top: 12px;
             left: 12px;
             background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(10px);
             padding: 6px 10px;
             border-radius: 8px;
             font-size: 0.7rem;
@@ -1337,21 +1333,13 @@
         /* Loading placeholder */
         .post-card.loading {
             min-height: 300px;
-            background: linear-gradient(90deg, var(--bg-card) 25%, rgba(37, 99, 235, 0.1) 50%, var(--bg-card) 75%);
-            background-size: 200% 100%;
-            animation: loading 1.5s infinite;
-        }
-
-        @keyframes loading {
-            0% { background-position: 200% 0; }
-            100% { background-position: -200% 0; }
+            background: var(--bg-card);
         }
 
         /* Image container with placeholder background */
         .carousel-item {
-            background: linear-gradient(90deg, var(--bg-card) 25%, rgba(217, 119, 6, 0.08) 50%, var(--bg-card) 75%);
-            background-size: 200% 100%;
-            animation: shimmer 1.5s infinite;
+            background: var(--bg-card);
+            contain: layout style paint;
         }
 
         .carousel-item img {
@@ -1363,10 +1351,9 @@
             opacity: 1;
         }
 
-        /* Stop shimmer and collapse placeholder once media is loaded */
+        /* Collapse placeholder background once media is loaded */
         .carousel-item:has(img.loaded),
         .carousel-item:has(video) {
-            animation: none;
             background: none;
         }
 
@@ -1391,15 +1378,6 @@
 
         .carousel-item.media-error::before {
             content: var(--i18n-media-error, '📷 图片暂不可用');
-        }
-
-        /* Lazy loading for images beyond first 6 posts */
-        .carousel-item img.lazy-img {
-            opacity: 0;
-        }
-
-        .carousel-item img.lazy-img.loaded {
-            opacity: 1;
         }
     </style>
 </head>
@@ -1846,13 +1824,15 @@
             });
         });
 
-        // Add scroll effect to header
+        // Add scroll effect to header (throttled via requestAnimationFrame)
+        let headerScrollTicking = false;
         window.addEventListener('scroll', () => {
-            const header = document.querySelector('header');
-            if (window.scrollY > 50) {
-                header.style.background = 'rgba(15, 23, 42, 0.95)';
-            } else {
-                header.style.background = 'rgba(15, 23, 42, 0.8)';
+            if (!headerScrollTicking) {
+                requestAnimationFrame(() => {
+                    document.querySelector('header').classList.toggle('scrolled', window.scrollY > 50);
+                    headerScrollTicking = false;
+                });
+                headerScrollTicking = true;
             }
         });
 
@@ -1986,7 +1966,8 @@
         }
 
         // Get media URL (prioritizes local paths, then CDN, then original)
-        function getMediaUrl(item) {
+        // When width is provided and a CDN URL exists, request a Qiniu resized image.
+        function getMediaUrl(item, width) {
             // First try local_path if it exists and is accessible
             if (item.local_path) {
                 // Convert absolute path to relative URL
@@ -1995,7 +1976,9 @@
             }
             // Then try CDN URL
             if (item.cdn_url) {
-                return item.cdn_url;
+                return width
+                    ? `${item.cdn_url}?imageView2/2/w/${width}`
+                    : item.cdn_url;
             }
             // Fall back to original URL
             return item.original_url || item.url;
@@ -2093,23 +2076,49 @@
 
         // Render media (images/videos)
         function renderMedia(media, postIndex) {
+            const sizesAttr = '(max-width: 768px) calc(100vw - 40px), (max-width: 1200px) calc(50vw - 32px), calc(33.33vw - 32px)';
+
             const items = media.map((item, i) => {
                 const mediaUrl = getMediaUrl(item);
                 const isVideo = item.type === 'video';
-                // Use lazy loading with large preload margin for smooth scrolling
-                const shouldLazyLoad = postIndex >= 6;
+                // Keep the first 3 posts eager; lazy-load the rest for LCP/CPU balance.
+                const loadingAttr = postIndex >= 3 ? 'loading="lazy"' : '';
+                const decodingAttr = 'decoding="async"';
+                const widthAttr = item.width ? `width="${item.width}"` : '';
+                const heightAttr = item.height ? `height="${item.height}"` : '';
+                const isSingleImage = !isVideo && media.length === 1;
+                const aspectStyle = (isSingleImage && item.width && item.height)
+                    ? `style="aspect-ratio: ${item.width} / ${item.height}"`
+                    : '';
+
+                // Responsive thumbnails via Qiniu when a CDN URL is available.
+                let srcsetAttr = '';
+                let thumbSrc = mediaUrl;
+                if (!isVideo && item.cdn_url) {
+                    thumbSrc = getMediaUrl(item, 400);
+                    const srcset = [400, 800, 1200]
+                        .map(w => `${getMediaUrl(item, w)} ${w}w`)
+                        .join(', ');
+                    srcsetAttr = `srcset="${srcset}" sizes="${sizesAttr}"`;
+                }
 
                 return `
-                    <div class="carousel-item ${isVideo ? 'video-item' : ''}">
+                    <div class="carousel-item ${isVideo ? 'video-item' : ''}" ${aspectStyle}>
                         ${isVideo ? `
                             <span class="media-type-badge">${isVideo ? '🎬 VIDEO' : '📷 IMG'}</span>
                             <video controls preload="metadata" poster="${mediaUrl}" onerror="handleMediaError(this)">
                                 <source src="${mediaUrl}" type="video/mp4">
                             </video>
                         ` : `
-                            <img src="${mediaUrl}"
+                            <img src="${thumbSrc}"
+                                 ${srcsetAttr}
                                  alt="${t('image_alt', i + 1)}"
-                                 ${shouldLazyLoad ? 'loading="lazy" class="lightbox-trigger lazy-img"' : 'class="lightbox-trigger"'}
+                                 ${widthAttr}
+                                 ${heightAttr}
+                                 ${loadingAttr}
+                                 ${decodingAttr}
+                                 class="lightbox-trigger"
+                                 data-full-src="${mediaUrl}"
                                  data-index="${i}"
                                  data-post-index="${postIndex}"
                                  onload="this.classList.add('loaded')"
@@ -2202,7 +2211,7 @@
             lightboxImages = [];
             document.querySelectorAll('.lightbox-trigger:not([data-load-error="true"])').forEach(img => {
                 lightboxImages.push({
-                    src: img.src,
+                    src: img.dataset.fullSrc || img.src,
                     postIndex: parseInt(img.dataset.postIndex),
                     mediaIndex: parseInt(img.dataset.index)
                 });
@@ -2218,7 +2227,7 @@
                 img.style.cursor = 'zoom-in';
                 img.addEventListener('click', () => {
                     currentLightboxIndex = index;
-                    lightboxImg.src = img.src;
+                    lightboxImg.src = img.dataset.fullSrc || img.src;
                     updateLightboxInfo();
                     lightbox.classList.add('active');
                     document.body.style.overflow = 'hidden';
@@ -2303,47 +2312,6 @@
 
         // Initialize scroll reveal
         initScrollReveal();
-
-        // Custom lazy loading for images with larger preload distance
-        function initCustomLazyLoad() {
-            const lazyObserver = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        const img = entry.target;
-                        // Force immediate load
-                        if (img.dataset.src) {
-                            img.src = img.dataset.src;
-                        }
-                        img.classList.add('loaded');
-                        lazyObserver.unobserve(img);
-                    }
-                });
-            }, {
-                root: null,
-                rootMargin: '2000px 0px 2000px 0px', // Preload images 2000px before they enter viewport
-                threshold: 0
-            });
-
-            // Observe lazy images
-            const observeLazyImages = () => {
-                document.querySelectorAll('.lazy-img:not(.loaded)').forEach(img => {
-                    lazyObserver.observe(img);
-                });
-            };
-
-            // Initial observation
-            setTimeout(observeLazyImages, 200);
-
-            // Re-observe when posts are re-rendered
-            const originalRender = renderPosts;
-            renderPosts = function() {
-                originalRender();
-                setTimeout(observeLazyImages, 200);
-            };
-        }
-
-        // Initialize custom lazy loading
-        initCustomLazyLoad();
 
         // Initialize i18n after all setup
         initI18n();
